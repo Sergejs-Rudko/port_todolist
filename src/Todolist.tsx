@@ -24,26 +24,28 @@ export const Todolist = (props: PropsType) => {
             setError(true)
             return
         }
-        props.addTask(newTaskTitle)
+        props.addTask(newTaskTitle, props.id)
         setNewTaskTitle("")
     }
 
     const onAllFilter = () => {
-        props.changeFilter("all")
+        props.changeFilter("all", props.id)
     }
 
     const onActiveFilter = () => {
-        props.changeFilter("active")
+        props.changeFilter("active", props.id)
     }
 
     const onCompletedFilter = () => {
-        props.changeFilter("completed")
+        props.changeFilter("completed", props.id)
     }
 
 
     return (
         <div>
-            <h3>{props.title}</h3>
+
+            <h3>{props.title}  <button onClick={() => props.removeTodolist(props.id)}>x</button></h3>
+
             <input type="text"
                    value={newTaskTitle}
                    onChange={onNewTitleChangeHandler}
@@ -58,10 +60,10 @@ export const Todolist = (props: PropsType) => {
                 {
                     props.tasks.map((task) => {
                         const onRemoveHandler = () => {
-                            props.removeTask(task.id)
+                            props.removeTask(task.id, props.id)
                         }
                         const onCheckboxChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-                            props.changeTaskStatus(task.id, e.currentTarget.checked)
+                            props.changeTaskStatus(task.id, e.currentTarget.checked, props.id)
                         }
 
                         return <li key={task.id}><input type="checkbox" checked={task.isDone}
@@ -83,11 +85,13 @@ export const Todolist = (props: PropsType) => {
 }
 
 type PropsType = {
+    id: string
     title: string
     tasks: TaskType[]
-    removeTask: (id: string) => void
-    changeFilter: (filter: FilterTypes) => void
-    addTask: (title: string) => void
-    changeTaskStatus: (id: string, isDone: boolean) => void
+    removeTask: (id: string, todolistID: string) => void
+    changeFilter: (filter: FilterTypes, todolistID: string) => void
+    addTask: (title: string, todolistID: string) => void
+    changeTaskStatus: (id: string, isDone: boolean, todolistID: string) => void
     filter: FilterTypes
+    removeTodolist: (id: string) => void
 }
