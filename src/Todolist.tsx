@@ -2,6 +2,9 @@ import React, {ChangeEvent} from "react";
 import {FilterTypes, TaskType} from "./App";
 import {AddItemForm} from "./AddItemForm";
 import {EditableSpan} from "./EditableSpan";
+import {Button, Checkbox, IconButton} from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import styles from "./Todolist.module.css"
 
 export const Todolist = (props: PropsType) => {
     const {filter} = props
@@ -22,22 +25,24 @@ export const Todolist = (props: PropsType) => {
         props.addTask(title, props.id)
     }
 
-    const changeTodolistTitle = (title : string) => {
-        props.changeTodolistTitle(props.id,title)
+    const changeTodolistTitle = (title: string) => {
+        props.changeTodolistTitle(props.id, title)
     }
-
-
 
 
     return (
         <div>
             <h3>
-                <EditableSpan title={props.title} changeItemTitle={(title)=> {changeTodolistTitle(title)}}/>
-                <button onClick={() => props.removeTodolist(props.id)}>x</button>
+                <EditableSpan title={props.title} changeItemTitle={(title) => {
+                    changeTodolistTitle(title)
+                }}/>
+                <IconButton onClick={() => props.removeTodolist(props.id)}>
+                    <DeleteIcon color={"secondary"}/>
+                </IconButton>
             </h3>
 
 
-            <AddItemForm addItem={addTask}/>
+            <AddItemForm addItem={addTask} addLabel={"Add task"}/>
             <ul>
                 {
                     props.tasks.map((task) => {
@@ -48,23 +53,28 @@ export const Todolist = (props: PropsType) => {
                             props.changeTaskStatus(task.id, e.currentTarget.checked, props.id)
                         }
 
-                        const changeTaskTitle = (title : string) => {
-                            props.changeTaskTitle(props.id,task.id,title)
+                        const changeTaskTitle = (title: string) => {
+                            props.changeTaskTitle(props.id, task.id, title)
                         }
 
-                        return <li key={task.id}><input type="checkbox" checked={task.isDone}
-                                                        onChange={onCheckboxChangeHandler}/>
-                            <EditableSpan title={task.title} changeItemTitle={(title)=> changeTaskTitle(title)}/>
-                            <button onClick={onRemoveHandler}>x</button>
+                        return <li className={styles.task} key={task.id}><Checkbox checked={task.isDone}
+                                                                                   onChange={onCheckboxChangeHandler}/>
+                            <EditableSpan title={task.title} changeItemTitle={(title) => changeTaskTitle(title)}/>
+                            <IconButton onClick={onRemoveHandler}>
+                                <DeleteIcon color={"secondary"}/>
+                            </IconButton>
                         </li>
                     })
                 }
             </ul>
             <div>
-                <button onClick={onAllFilter} className={filter === "all" ? "activeFilter" : ""}>all</button>
-                <button onClick={onActiveFilter} className={filter === "active" ? "activeFilter" : ""}>active</button>
-                <button onClick={onCompletedFilter} className={filter === "completed" ? "activeFilter" : ""}>completed
-                </button>
+                <Button onClick={onAllFilter} color={filter === "all" ? "success" : "primary"}
+                        variant={filter === "all" ? "outlined" : "text"}>all</Button>
+                <Button onClick={onActiveFilter} color={filter === "active" ? "success" : "primary"}
+                        variant={filter === "active" ? "outlined" : "text"}>active</Button>
+                <Button onClick={onCompletedFilter} color={filter === "completed" ? "success" : "primary"}
+                        variant={filter === "completed" ? "outlined" : "text"}>completed
+                </Button>
             </div>
         </div>
     )
@@ -80,8 +90,8 @@ type PropsType = {
     changeTaskStatus: (id: string, isDone: boolean, todolistID: string) => void
     filter: FilterTypes
     removeTodolist: (id: string) => void
-    changeTaskTitle : (todolistID : string, id : string, newTitle : string) => void
-    changeTodolistTitle : (id : string, newTitle : string) => void
+    changeTaskTitle: (todolistID: string, id: string, newTitle: string) => void
+    changeTodolistTitle: (id: string, newTitle: string) => void
 }
 
 

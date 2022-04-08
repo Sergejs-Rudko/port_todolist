@@ -1,7 +1,11 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from "react";
+import {IconButton, TextField} from "@mui/material";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+
 
 type AddItemFormPropsType = {
     addItem: (newTaskTitle: string) => void
+    addLabel: string
 }
 
 
@@ -32,15 +36,18 @@ export const AddItemForm = (props: AddItemFormPropsType) => {
 
     return (
         <div>
-            <input type="text"
-                   value={newTaskTitle}
-                   onChange={onNewTitleChangeHandler}
-                   onKeyPress={onAddTaskViaEnterHandler}
-                   className={error ? "error" : ""}/>
-            <button onClick={() =>
-                addTask()
-            }>Add task
-            </button>
+            <TextField
+                variant={"standard"}
+                label={props.addLabel}
+                type="text"
+                value={newTaskTitle}
+                onChange={onNewTitleChangeHandler}
+                onKeyPress={onAddTaskViaEnterHandler}
+                error={error}
+            ></TextField>
+            <IconButton onClick={addTask}>
+                <AddCircleOutlineIcon color={"primary"}/>
+            </IconButton>
             {error && <div className={"errorMessage"}>Title is required</div>}
         </div>
     )
