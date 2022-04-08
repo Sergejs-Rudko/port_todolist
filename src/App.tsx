@@ -2,13 +2,14 @@ import React, {useState} from 'react';
 import './App.css';
 import {Todolist} from "./Todolist";
 import {v1} from "uuid";
+import {AddItemForm} from "./AddItemForm";
 
 function App() {
 
     let todolistId1 = v1()
     let todolistId2 = v1()
 
-    let [tasks, setTasks] = useState(
+    let [tasks, setTasks] = useState<TasksStateType>(
         {
             [todolistId1]: [
                 {id: v1(), title: "HTML", isDone: true},
@@ -69,9 +70,33 @@ function App() {
         setTasks({...tasks})
     }
 
+    const addTodolist = (title: string) => {
+        let todolist: TodolistType = {id: v1(), title, filter: "all"}
+        setTodolists([todolist, ...todolists])
+        setTasks({...tasks, [todolist.id]: []})
+    }
+
+    const changeTaskTitle = (todolistID : string, id : string, newTitle : string) => {
+        let t = tasks[todolistID].find((task) => task.id === id)
+        if(t){
+            t.title = newTitle
+            setTasks({...tasks})
+        }
+    }
+
+    const changeTodolistTitle = (id : string, newTitle : string) => {
+        let tl = todolists.find((tl) => tl.id === id)
+        if(tl){
+            tl.title = newTitle
+            setTodolists([...todolists])
+        }
+    }
 
     return (
         <div className="App">
+            <AddItemForm addItem={(title) => {
+                addTodolist(title)
+            }}/>
             {
                 todolists.map((tl) => {
                     let tasksForTodolist = tasks[tl.id]
@@ -94,7 +119,9 @@ function App() {
                         addTask={addTask}
                         changeTaskStatus={changeTaskStatus}
                         removeTodolist={removeTodolist}
+                        changeTaskTitle={changeTaskTitle}
                         filter={tl.filter}
+                        changeTodolistTitle={changeTodolistTitle}
                     />
                 })
             }
@@ -115,6 +142,12 @@ export type TodolistType = {
     filter: FilterTypes
 }
 
+export type TasksStateType = {
+    [key: string]: Array<TaskType>
+}
+
 export type FilterTypes = "all" | "active" | "completed"
 
 export default App;
+
+
