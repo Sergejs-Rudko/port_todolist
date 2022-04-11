@@ -7,22 +7,22 @@ export const todolistsReducer = (state: Array<TodolistType>, action: ActionType)
             return state.filter((tl) => tl.id !== action.id)
         }
         case "ADD_TODOLIST": {
-            let todolist: TodolistType = {id: v1(), title: action.title, filter: "all"}
+            let todolist: TodolistType = {id: action.id, title: action.title, filter: "all"}
             return [...state, todolist]
         }
         case "CHANGE_TODOLIST_TITLE": {
             let todolist = state.find((tl) => tl.id === action.id)
             if (todolist) {
                 return state.map((tl) => tl.id !== action.id ? tl : {...tl, title: action.newTitle})
-            }else{
+            } else {
                 throw new Error("INVALID ID FOR CHANGING TODOLIST TITLE")
             }
         }
-        case "CHANGE_TODOLIST_FILTER":{
+        case "CHANGE_TODOLIST_FILTER": {
             let todolist = state.find((tl) => tl.id === action.id)
-            if(todolist){
-                return state.map((tl)=> tl.id === action.id ? {...tl, filter : action.filter} : tl)
-            }else{
+            if (todolist) {
+                return state.map((tl) => tl.id === action.id ? {...tl, filter: action.filter} : tl)
+            } else {
                 throw new Error("INVALID ID TO CHANGE TODOLIST FILTER")
             }
         }
@@ -37,7 +37,8 @@ export const removeTodolistAC = (id: string) => ({
 
 export const addTodolistAC = (title: string) => ({
     type: "ADD_TODOLIST",
-    title
+    title,
+    id: v1()
 } as const)
 
 export const changeTodolistTitleAC = (id: string, newTitle: string) => ({
@@ -46,11 +47,11 @@ export const changeTodolistTitleAC = (id: string, newTitle: string) => ({
     newTitle
 } as const)
 
-export const changeTodolistFilterAC = (id : string, filter : FilterTypes) => ({
-    type : "CHANGE_TODOLIST_FILTER",
+export const changeTodolistFilterAC = (id: string, filter: FilterTypes) => ({
+    type: "CHANGE_TODOLIST_FILTER",
     id,
     filter
-}as const)
+} as const)
 
 type ActionType = RemoveTodolistActionType |
     AddTodolistActionType |
@@ -58,6 +59,6 @@ type ActionType = RemoveTodolistActionType |
     ChangeTodolistFilterActionType
 
 type ChangeTodolistTitleActionType = ReturnType<typeof changeTodolistTitleAC>
-type RemoveTodolistActionType = ReturnType<typeof removeTodolistAC>
-type AddTodolistActionType = ReturnType<typeof addTodolistAC>
+export type RemoveTodolistActionType = ReturnType<typeof removeTodolistAC>
+export type AddTodolistActionType = ReturnType<typeof addTodolistAC>
 type ChangeTodolistFilterActionType = ReturnType<typeof changeTodolistFilterAC>
