@@ -6,7 +6,9 @@ import {Button, Checkbox, IconButton} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from "./Todolist.module.css"
 
+
 export const Todolist = (props: PropsType) => {
+
     const {filter} = props
 
     const onAllFilter = () => {

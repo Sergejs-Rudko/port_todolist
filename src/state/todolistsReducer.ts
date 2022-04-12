@@ -1,14 +1,21 @@
 import {FilterTypes, TodolistType} from "../App";
 import {v1} from "uuid";
 
-export const todolistsReducer = (state: Array<TodolistType>, action: ActionType): Array<TodolistType> => {
+export let todolistId1 = v1()
+export let todolistId2 = v1()
+const initialState : Array<TodolistType>= [
+    {id: todolistId1, title: "What to learn", filter: "all"},
+    {id: todolistId2, title: "What to buy", filter: "all"},
+]
+
+export const todolistsReducer = (state: Array<TodolistType> = initialState, action: ActionType): Array<TodolistType> => {
     switch (action.type) {
         case "REMOVE_TODOLIST": {
             return state.filter((tl) => tl.id !== action.id)
         }
         case "ADD_TODOLIST": {
             let todolist: TodolistType = {id: action.id, title: action.title, filter: "all"}
-            return [todolist,...state]
+            return [todolist, ...state]
         }
         case "CHANGE_TODOLIST_TITLE": {
             let todolist = state.find((tl) => tl.id === action.id)
@@ -26,8 +33,9 @@ export const todolistsReducer = (state: Array<TodolistType>, action: ActionType)
                 throw new Error("INVALID ID TO CHANGE TODOLIST FILTER")
             }
         }
+        default :
+            return state
     }
-    return state
 }
 
 export const removeTodolistAC = (id: string) => ({
