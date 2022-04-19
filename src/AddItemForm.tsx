@@ -9,12 +9,15 @@ type AddItemFormPropsType = {
 }
 
 
-export const AddItemForm = (props: AddItemFormPropsType) => {
+export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
+    console.log("add item form called")
     let [newTaskTitle, setNewTaskTitle] = useState("")
     let [error, setError] = useState(false)
 
     const onNewTitleChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setError(false)
+        if (error !== false) {
+            setError(false)
+        }
         setNewTaskTitle(e.currentTarget.value)
     }
 
@@ -51,4 +54,4 @@ export const AddItemForm = (props: AddItemFormPropsType) => {
             {error && <div className={"errorMessage"}>Title is required</div>}
         </div>
     )
-}
+})
