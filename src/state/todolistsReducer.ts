@@ -1,20 +1,21 @@
-import {FilterTypes, TodolistType} from "../App";
 import {v1} from "uuid";
+import {TodolistType} from "../API/todolistsAPI";
 
 export let todolistId1 = v1()
 export let todolistId2 = v1()
-const initialState : Array<TodolistType>= [
-    {id: todolistId1, title: "What to learn", filter: "all"},
-    {id: todolistId2, title: "What to buy", filter: "all"},
-]
 
-export const todolistsReducer = (state: Array<TodolistType> = initialState, action: ActionType): Array<TodolistType> => {
+const initialState = [
+    /*    {id: todolistId1, title: "What to learn", filter: "all"},
+        {id: todolistId2, title: "What to buy", filter: "all"},*/
+] as Array<TodolistDomainType>
+
+export const todolistsReducer = (state: Array<TodolistDomainType> = initialState, action: ActionType): Array<TodolistType> => {
     switch (action.type) {
         case "REMOVE_TODOLIST": {
             return state.filter((tl) => tl.id !== action.id)
         }
         case "ADD_TODOLIST": {
-            let todolist: TodolistType = {id: action.id, title: action.title, filter: "all"}
+            let todolist: TodolistDomainType = {id: action.id, title: action.title, filter: "all" , addedDate : "", order : 0}
             return [todolist, ...state]
         }
         case "CHANGE_TODOLIST_TITLE": {
@@ -32,6 +33,9 @@ export const todolistsReducer = (state: Array<TodolistType> = initialState, acti
             } else {
                 throw new Error("INVALID ID TO CHANGE TODOLIST FILTER")
             }
+        }
+        case "SET_TODOLISTS": {
+            return {...action.todolists}
         }
         default :
             return state
@@ -61,12 +65,25 @@ export const changeTodolistFilterAC = (id: string, filter: FilterTypes) => ({
     filter
 } as const)
 
+export const setTodolistsAC = (todolists: TodolistType[]) => ({
+    type: "SET_TODOLISTS",
+    todolists
+} as const)
+//TYPES____________________________________________________________________________________________________________
+export type FilterTypes = "all" | "active" | "completed"
+
+export type TodolistDomainType = TodolistType & {
+    filter : FilterTypes
+}
+
 type ActionType = RemoveTodolistActionType |
     AddTodolistActionType |
     ChangeTodolistTitleActionType |
-    ChangeTodolistFilterActionType
+    ChangeTodolistFilterActionType |
+    SetTodolistsActionType
 
 type ChangeTodolistTitleActionType = ReturnType<typeof changeTodolistTitleAC>
 export type RemoveTodolistActionType = ReturnType<typeof removeTodolistAC>
 export type AddTodolistActionType = ReturnType<typeof addTodolistAC>
 type ChangeTodolistFilterActionType = ReturnType<typeof changeTodolistFilterAC>
+type SetTodolistsActionType = ReturnType<typeof setTodolistsAC>

@@ -1,17 +1,60 @@
-import {TasksStateType, TaskType} from "../App";
+import {TasksStateType} from "../App";
 import {v1} from "uuid";
 import {AddTodolistActionType, RemoveTodolistActionType, todolistId1, todolistId2} from "./todolistsReducer";
+import {TaskPriorities, TaskStatuses, TaskType} from "../API/todolistsAPI";
 
 const initialState: TasksStateType = {
     [todolistId1]: [
-        {id: v1(), title: "HTML", isDone: true},
-        {id: v1(), title: "CSS", isDone: true},
-        {id: v1(), title: "React", isDone: false},
+        {
+            description: "",
+            title: "HTML",
+            status: TaskStatuses.New,
+            priority: TaskPriorities.Low,
+            startDate: "",
+            deadline: "",
+            id: v1(),
+            todoListId: todolistId1,
+            order: 0,
+            addedDate: ""
+        },
+        {
+            description: "",
+            title: "CSS",
+            status: TaskStatuses.Completed,
+            priority: TaskPriorities.Low,
+            startDate: "",
+            deadline: "",
+            id: v1(),
+            todoListId: todolistId1,
+            order: 0,
+            addedDate: ""
+        },
     ],
     [todolistId2]: [
-        {id: v1(), title: "Banna", isDone: false},
-        {id: v1(), title: "Milk", isDone: false},
-        {id: v1(), title: "Snickers", isDone: false},
+        {
+            description: "",
+            title: "HTML",
+            status: TaskStatuses.New,
+            priority: TaskPriorities.Low,
+            startDate: "",
+            deadline: "",
+            id: v1(),
+            todoListId: todolistId1,
+            order: 0,
+            addedDate: ""
+        },
+        {
+            description: "",
+            title: "CSS",
+            status: TaskStatuses.Completed,
+            priority: TaskPriorities.Low,
+            startDate: "",
+            deadline: "",
+            id: v1(),
+            todoListId: todolistId1,
+            order: 0,
+            addedDate: ""
+        },
     ],
 }
 
@@ -28,8 +71,15 @@ export const taskReducer = (state: TasksStateType = initialState, action: TaskRe
         case "ADD_TASK": {
             let task: TaskType = {
                 id: v1(),
-                isDone: false,
-                title: action.title
+                status: TaskStatuses.New,
+                title: action.title,
+                addedDate: "",
+                startDate: "",
+                deadline: "",
+                description: "",
+                order: 0,
+                priority: TaskPriorities.Low,
+                todoListId: action.todolistId
             }
             let todolist = state[action.todolistId]
             if (todolist) {
@@ -60,7 +110,7 @@ export const taskReducer = (state: TasksStateType = initialState, action: TaskRe
                 ...state,
                 [action.todolistID]: state[action.todolistID].map((t) => t.id !== action.id ? t : {
                     ...t,
-                    isDone: action.isDone
+                    status: action.status
                 })
             }
         }
@@ -97,11 +147,11 @@ export const changeTaskTitleAC = (todolistID: string, id: string, newTitle: stri
     newTitle
 } as const)
 
-export const changeTaskStatusAC = (todolistID: string, id: string, isDone: boolean) => ({
+export const changeTaskStatusAC = (todolistID: string, id: string, status: TaskStatuses) => ({
     type: "CHANGE_TASK_STATUS",
     todolistID,
     id,
-    isDone
+    status
 } as const)
 
 type TaskReducerActionType =
