@@ -1,7 +1,14 @@
 import {TasksStateType} from "../App";
 import {v1} from "uuid";
-import {AddTodolistActionType, RemoveTodolistActionType, todolistId1, todolistId2} from "./todolistsReducer";
-import {TaskPriorities, TaskStatuses, TaskType} from "../API/todolistsAPI";
+import {
+    AddTodolistActionType,
+    RemoveTodolistActionType,
+    SetTodolistsActionType,
+    todolistId1,
+    todolistId2
+} from "./todolistsReducer";
+import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI} from "../API/todolistsAPI";
+import {Dispatch} from "redux";
 
 const initialState: TasksStateType = {
     [todolistId1]: [
@@ -122,12 +129,26 @@ export const taskReducer = (state: TasksStateType = initialState, action: TaskRe
             delete copy[action.id]
             return copy
         }
+        case "SET_TODOLISTS": {
+            let stateCopy = {...state}
+            action.todolists.forEach((tl) => {
+                stateCopy[tl.id] = []
+            })
+            return stateCopy
+
+        }
+        case "SET_TASKS": {
+            return {
+                ...state,
+                [action.todolistID]: action.tasks
+            }
+        }
         default :
             return state
     }
 }
 
-
+//ACTION CREATORS_______________________________________________________________________________________________________
 export const removeTaskAC = (todolistID: string, id: string) => ({
     type: "REMOVE_TASK",
     todolistID,
@@ -154,6 +175,23 @@ export const changeTaskStatusAC = (todolistID: string, id: string, status: TaskS
     status
 } as const)
 
+export const setTasksAC = (tasks: TaskType[], todolistID: string) => ({
+    type: "SET_TASKS",
+    tasks,
+    todolistID
+} as const)
+
+//THUNKS________________________________________________________________________________________________________________
+
+export const fetchTasksTC = (todolistID: string) => {
+    return (dispatch: Dispatch) => {
+        todolistsAPI.getTasks(todolistID).then(res => {
+            dispatch(setTasksAC(res.data.items, todolistID))
+        })
+    }
+}
+
+//TYPES_________________________________________________________________________________________________________________
 type TaskReducerActionType =
     RemoveTaskActionType
     | AddTaskActionType
@@ -161,7 +199,11 @@ type TaskReducerActionType =
     | ChangeTaskStatusActionType
     | AddTodolistActionType
     | RemoveTodolistActionType
+    | SetTodolistsActionType
+    | SetTasksActionType
+
 type RemoveTaskActionType = ReturnType<typeof removeTaskAC>
 type AddTaskActionType = ReturnType<typeof addTaskAC>
 type ChangeTaskTitleActionType = ReturnType<typeof changeTaskTitleAC>
 type ChangeTaskStatusActionType = ReturnType<typeof changeTaskStatusAC>
+type SetTasksActionType = ReturnType<typeof setTasksAC>
